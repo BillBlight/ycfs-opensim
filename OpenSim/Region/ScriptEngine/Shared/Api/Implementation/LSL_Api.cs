@@ -6890,6 +6890,31 @@ namespace OpenSim.Region.ScriptEngine.Shared.Api
             return ScriptBaseClass.NULL_KEY;
         }
 
+        public LSL_Key llRequestUserKey(LSL_String name)
+        {
+            UUID identifier = UUID.Random();
+
+            UUID request_id = m_AsyncCommands.DataserverPlugin.RegisterRequest(m_host.LocalId, m_item.ItemID, identifier.ToString());
+
+            string[] split = name.m_string.Split('.');
+
+            if(split.Length <= 2)
+            {
+                string first = split[0];
+                string last = split.Length == 2 ? split[1] : "Resident";
+
+                UUID avatar = World.UserManagementModule.GetUserIdByName(first, last);
+
+                m_AsyncCommands.DataserverPlugin.DataserverReply(identifier.ToString(), avatar.ToString());
+            }
+            else
+            {
+                m_AsyncCommands.DataserverPlugin.DataserverReply(identifier.ToString(), ScriptBaseClass.NULL_KEY);
+            }
+
+            return request_id.ToString();
+        }
+
         public void llSetTextureAnim(int mode, int face, int sizex, int sizey, double start, double length, double rate)
         {
             m_host.AddScriptLPS(1);
