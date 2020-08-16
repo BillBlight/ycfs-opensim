@@ -1329,7 +1329,33 @@ namespace OpenSim.Groups
 
                     OutgoingInstantMessage(msg, invitedAgentID);
                 }
-            }
+            } else {
+				if (m_msgTransferModule != null)
+                {
+                    Guid inviteUUID = InviteID.Guid;
+
+                    GridInstantMessage msg = new GridInstantMessage();
+
+                    msg.imSessionID = UUID.Zero.Guid;
+                    
+                    // msg.fromAgentID = agentID.Guid;
+                    msg.fromAgentID = UUID.Zero.Guid;
+                    msg.fromAgentName = "Groups";
+                    //msg.timestamp = (uint)Util.UnixTimeSinceEpoch();
+                    msg.timestamp = (uint)Util.UnixTimeSinceEpoch();
+                    msg.fromAgentName = "Groups";
+                    msg.message = string.Format("You are already member of the group {0}", group.GroupName);
+                    msg.dialog = (byte)OpenMetaverse.InstantMessageDialog.MessageBox;;
+                    msg.fromGroup = false;
+                    msg.offline = (byte)0;
+                    msg.ParentEstateID = 0;
+                    msg.Position = Vector3.Zero;
+                    msg.RegionID = UUID.Zero.Guid;
+                    msg.binaryBucket = new byte[0];
+
+                    OutgoingInstantMessage(msg, invitedAgentID);
+                }
+			}
         }
 
         public List<DirGroupsReplyData> FindGroups(IClientAPI remoteClient, string query)
