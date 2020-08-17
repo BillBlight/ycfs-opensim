@@ -19340,7 +19340,7 @@ namespace OpenSim.Region.ScriptEngine.Shared.Api
 
         public static int GetLines(UUID assetID)
         {
-            if (m_Notecards.TryGetValue(assetID, 0, out string[] text))
+            if (m_Notecards.TryGetValue(assetID, 30000, out string[] text))
                 return text.Length;
             return -1;
         }
@@ -19353,7 +19353,7 @@ namespace OpenSim.Region.ScriptEngine.Shared.Api
         /// <returns></returns>
         public static string GetLine(UUID assetID, int lineNumber)
         {
-            if (lineNumber >= 0 && m_Notecards.TryGetValue(assetID, 0, out string[] text))
+            if (lineNumber >= 0 && m_Notecards.TryGetValue(assetID, 30000, out string[] text))
             {
                 if (lineNumber >= text.Length)
                     return "\n\n\n";
