@@ -1,6 +1,5 @@
 #!/bin/sh
 
-nant /clean
 echo "Scrubbing Directories"
 find . -name "*.csproj" -type f -print0 | xargs -0 /bin/rm -f
 find . -name "*.csproj.user" -type f -print0 | xargs -0 /bin/rm -f
