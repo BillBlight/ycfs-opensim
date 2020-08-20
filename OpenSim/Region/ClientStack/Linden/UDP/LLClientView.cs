@@ -46,7 +46,6 @@ using OpenSim.Region.Framework.Interfaces;
 using OpenSim.Region.Framework.Scenes;
 using OpenSim.Services.Interfaces;
 
-
 using AssetLandmark = OpenSim.Framework.AssetLandmark;
 using Caps = OpenSim.Framework.Capabilities.Caps;
 using PermissionMask = OpenSim.Framework.PermissionMask;
@@ -316,9 +315,6 @@ namespace OpenSim.Region.ClientStack.LindenUDP
         // LLClientView Only
         public delegate void BinaryGenericMessage(Object sender, string method, byte[][] args);
 
-        /// <summary>Used to adjust Sun Orbit values so Linden based viewers properly position sun</summary>
-        private const float m_sunPainDaHalfOrbitalCutoff = 4.712388980384689858f;
-
         private static readonly ILog m_log = LogManager.GetLogger(MethodBase.GetCurrentMethod().DeclaringType);
         private static string LogHeader = "[LLCLIENTVIEW]";
 
@@ -363,7 +359,7 @@ namespace OpenSim.Region.ClientStack.LindenUDP
         /// </value>
         protected List<uint> m_killRecord;
 
-//        protected HashSet<uint> m_attachmentsSent;
+        //protected HashSet<uint> m_attachmentsSent;
 
         private bool m_SendLogoutPacketWhenClosing = true;
 
@@ -479,7 +475,7 @@ namespace OpenSim.Region.ClientStack.LindenUDP
         /// <summary>
         /// Used to synchronise threads when client is being closed.
         /// </summary>
-        public Object CloseSyncLock { get; private set; }
+        public object CloseSyncLock { get;} = new object();
 
         public bool IsLoggingOut { get; set; }
 
@@ -509,7 +505,6 @@ namespace OpenSim.Region.ClientStack.LindenUDP
         {
 //            DebugPacketLevel = 1;
 
-            CloseSyncLock = new Object();
             SelectedObjects = new List<uint>();
 
             RegisterInterface<IClientIM>(this);
@@ -611,7 +606,6 @@ namespace OpenSim.Region.ClientStack.LindenUDP
                 DisableSimulatorPacket disable = (DisableSimulatorPacket)PacketPool.Instance.GetPacket(PacketType.DisableSimulator);
                 OutPacket(disable, ThrottleOutPacketType.Unknown);
             }
-
 
             // Fire the callback for this connection closing
             if (OnConnectionClosed != null)
@@ -8134,9 +8128,6 @@ namespace OpenSim.Region.ClientStack.LindenUDP
 
         #endregion
 
-        /// <summary>
-        /// This is a different way of processing packets then ProcessInPacket
-        /// </summary>
         protected virtual void RegisterLocalPacketHandlers()
         {
             AddLocalPacketHandler(PacketType.LogoutRequest, HandleLogout);
@@ -13373,9 +13364,9 @@ namespace OpenSim.Region.ClientStack.LindenUDP
 
         public bool TryGet<T>(out T iface)
         {
-            if (m_clientInterfaces.ContainsKey(typeof(T)))
+            if(m_clientInterfaces.TryGetValue(typeof(T), out object o))
             {
-                iface = (T)m_clientInterfaces[typeof(T)];
+                iface = (T)o;
                 return true;
             }
             iface = default(T);
